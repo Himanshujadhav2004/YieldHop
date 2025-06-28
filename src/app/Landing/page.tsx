@@ -6,8 +6,10 @@ import { LandingNav } from "@/components/LandingNav";
 import { TypewriterEffectSmooth } from "@/components/ui/typewriter-effect";
 import { GridPatternCard, GridPatternCardBody } from "@/components/ui/card-with-grid-ellipsis-pattern"
 import { FeaturesSectionWithHoverEffects } from "@/components/feature-section-with-hover-effects";
+import { Meteors } from "@/components/ui/meteors";
+import { Footerdemo } from "@/components/ui/footer-section";
 
-import { Calendar, Code, FileText, User, Clock } from "lucide-react";
+import { DollarSign, Lock, Shuffle, Send, Shield} from "lucide-react";
 import RadialOrbitalTimeline from "@/components/ui/radial-orbital-timeline";
 
 
@@ -36,60 +38,61 @@ function Landing(){
   const timelineData = [
   {
     id: 1,
-    title: "Planning",
-    date: "Jan 2024",
-    content: "Project planning and requirements gathering phase.",
-    category: "Planning",
-    icon: Calendar,
+    title: "Earn",
+    date: "Jun 2024",
+    content: "Users earn optimized yield automatically.",
+    category: "Feature",
+    icon: DollarSign,
     relatedIds: [2],
-    status: "completed" as const,
-    energy: 100,
+    status: "pending" as const,
+    energy: 20,
   },
   {
     id: 2,
-    title: "Design",
-    date: "Feb 2024",
-    content: "UI/UX design and system architecture.",
-    category: "Design",
-    icon: FileText,
+    title: "Stake",
+    date: "Jun 2024",
+    content: "Users stake once across chains.",
+    category: "Feature",
+    icon: Lock,
     relatedIds: [1, 3],
-    status: "completed" as const,
-    energy: 90,
+    status: "pending" as const,
+    energy: 20,
   },
   {
     id: 3,
-    title: "Development",
-    date: "Mar 2024",
-    content: "Core features implementation and testing.",
-    category: "Development",
-    icon: Code,
+    title: "Cross",
+    date: "Jun 2024",
+    content: "Enables cross-chain yield routing.",
+    category: "Feature",
+    icon: Shuffle,
     relatedIds: [2, 4],
-    status: "in-progress" as const,
-    energy: 60,
+    status: "pending" as const,
+    energy: 20,
   },
   {
     id: 4,
-    title: "Testing",
-    date: "Apr 2024",
-    content: "User testing and bug fixes.",
-    category: "Testing",
-    icon: User,
+    title: "Route",
+    date: "Jun 2024",
+    content: "Assets are routed automatically.",
+    category: "Feature",
+    icon: Send,
     relatedIds: [3, 5],
     status: "pending" as const,
-    energy: 30,
+    energy: 20,
   },
   {
     id: 5,
-    title: "Release",
-    date: "May 2024",
-    content: "Final deployment and release.",
-    category: "Release",
-    icon: Clock,
+    title: "Trust",
+    date: "Jun 2024",
+    content: "Built on Chainlink’s trusted infrastructure.",
+    category: "Feature",
+    icon: Shield,
     relatedIds: [4],
     status: "pending" as const,
-    energy: 10,
+    energy: 20,
   },
 ];
+
 return(<div>
   <GridPatternCard>
       <GridPatternCardBody>
@@ -150,8 +153,41 @@ Chainlink CCIP and Automation enable secure, automated cross-chain yield transfe
     </div>
     </GridPatternCardBody>
     </GridPatternCard>
-   
-      <RadialOrbitalTimeline timelineData={timelineData} />
+    <section className="w-full px-4 py-10 lg:py-20 bg-white dark:bg-black">
+      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-center gap-10">
+        
+        {/* Timeline Left */}
+        <div className="w-full lg:w-1/2 flex justify-center">
+          <RadialOrbitalTimeline timelineData={timelineData} />
+        </div>
+
+        {/* Info Right */}
+        <div className="w-full lg:w-1/2 flex justify-center">
+          <div className="bg-gradient-to-b from-blue-50 to-blue-100 dark:from-zinc-800 dark:to-zinc-900 rounded-2xl shadow-xl p-6 max-w-md w-full">
+            <h2 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white text-center lg:text-left">
+              Information of YieldHop
+            </h2>
+            <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-sm">
+              YieldHop is a cross-chain yield optimizer powered by <strong>Chainlink CCIP</strong> and <strong>Automation</strong>. It routes stablecoins across chains to find the best returns automatically and securely.
+            </p>
+            <ul className="mt-6 list-disc list-inside text-gray-600 dark:text-gray-400 text-sm">
+              <li>Stake once, earn everywhere</li>
+              <li>Secure cross-chain yield routing</li>
+              <li>Built on Chainlink infrastructure</li>
+              <li>Fully decentralized & transparent</li>
+            </ul>
+          </div>
+        </div>
+
+        
+      </div>
+    </section>
+
+
+
+          <div className="block">
+      <Footerdemo />
+    </div>
 </div>
 
 )
