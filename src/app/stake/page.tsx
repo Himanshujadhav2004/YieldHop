@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { prepareContractCall, sendTransaction, readContract } from "thirdweb";
-import { useActiveAccount, useSendTransaction, TransactionButton, ConnectButton } from "thirdweb/react";
+import { useActiveAccount, useSendTransaction, TransactionButton, ConnectButton} from "thirdweb/react";
 import { sepolia, avalancheFuji } from "thirdweb/chains";
 import { client } from "../client";
 import { ethers } from "ethers";
@@ -87,6 +87,8 @@ function Staking() {
       setTimeout(async () => {
         try {
           const contract = getCurrentContract();
+          console.log(`Fetching data for chain: ${currentChain}`);
+          console.log(`Contract address: ${currentChain === "sepolia" ? SEPOLIA_CONTRACT_ADDRESS : FUJI_CONTRACT_ADDRESS}`);
 
           // Fetch user balance
           const balance = await readContract({
@@ -95,6 +97,7 @@ function Staking() {
             params: [address],
           });
           setUserBalance(ethers.formatEther(balance));
+          console.log(`User balance: ${ethers.formatEther(balance)}`);
 
           // Fetch total deposited
           const total = await readContract({
@@ -102,20 +105,29 @@ function Staking() {
             method: "function totalDeposited() view returns (uint256)",
           });
           setTotalDeposited(ethers.formatEther(total));
+          console.log(`Total deposited: ${ethers.formatEther(total)}`);
 
           // Fetch APY
+          console.log("Fetching local APY...");
           const apy = await readContract({
             contract,
             method: "function apy() view returns (uint256)",
+            params:[]
           });
-          setLocalAPY(ethers.formatEther(apy));
+          console.log(`Raw local APY (wei): ${apy.toString()}`);
+          console.log(`Local APY (percentage): ${formatAPY(apy.toString())}%`);
+          setLocalAPY(apy.toString());
 
           // Fetch remote APY
+          console.log("Fetching remote APY...");
           const remote = await readContract({
             contract,
             method: "function remoteAPY() view returns (uint256)",
+            params:[]
           });
-          setRemoteAPY(ethers.formatEther(remote));
+          console.log(`Raw remote APY (wei): ${remote.toString()}`);
+          console.log(`Remote APY (percentage): ${formatAPY(remote.toString())}%`);
+          setRemoteAPY(remote.toString());
 
           // Fetch migration status
           const migration = await readContract({
@@ -123,6 +135,7 @@ function Staking() {
             method: "function migrationInProgress() view returns (bool)",
           });
           setMigrationInProgress(migration);
+          console.log(`Migration in progress: ${migration}`);
 
           // Fetch destination info
           const destInfo = await readContract({
@@ -134,6 +147,8 @@ function Staking() {
             address: destInfo[1],
             apy: ethers.formatEther(destInfo[2])
           });
+          console.log(`Destination chain: ${destInfo[0].toString()}`);
+          console.log(`Destination address: ${destInfo[1]}`);
 
           // Fetch asset address
           const asset = await readContract({
@@ -141,6 +156,7 @@ function Staking() {
             method: "function asset() view returns (address)",
           });
           setAssetAddress(asset);
+          console.log(`Asset address: ${asset}`);
 
           // Fetch migration status
           const status = await readContract({
@@ -148,14 +164,15 @@ function Staking() {
             method: "function getUpkeepStatus() view returns (string)",
           });
           setMigrationStatus(status);
+          console.log(`Migration status: ${status}`);
 
         } catch (error) {
           console.error("Error fetching contract data:", error);
           // Use mock data if contract calls fail
           setUserBalance("1000");
           setTotalDeposited("50000");
-          setLocalAPY("0.05"); // 5%
-          setRemoteAPY("0.08"); // 8%
+          setLocalAPY("50000000000000000"); // 5% in wei (0.05 * 10^18)
+          setRemoteAPY("80000000000000000"); // 8% in wei (0.08 * 10^18)
           setMigrationInProgress(false);
           setDestinationInfo({
             chain: currentChain === "sepolia" ? "43113" : "11155111", // Fuji : Sepolia
@@ -180,7 +197,17 @@ function Staking() {
   };
 
   const formatAPY = (value: string | number) => {
-    return (Number(value) * 100).toFixed(2);
+    try {
+      // Convert from wei to percentage
+      const apyInWei = BigInt(value);
+      const apyInEther = Number(apyInWei) / Math.pow(10, 18);
+      const percentage = (apyInEther * 100);
+      console.log(`formatAPY - Input: ${value}, Wei: ${apyInWei}, Ether: ${apyInEther}, Percentage: ${percentage}`);
+      return percentage.toFixed(2);
+    } catch (error) {
+      console.error("Error formatting APY:", error, "Value:", value);
+      return "0.00";
+    }
   };
 
   const getChainName = (chainId: string) => {
@@ -204,7 +231,11 @@ function Staking() {
               <Button
                 variant={currentChain === "sepolia" ? "default" : "outline"}
                 onClick={() => setCurrentChain("sepolia")}
-                className={`${currentChain === "sepolia" ? "bg-black dark:bg-white text-white dark:text-black" : "border-black dark:border-white text-black dark:text-white"}`}
+                className={`${
+                  currentChain === "sepolia" 
+                    ? "bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200" 
+                    : "border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black"
+                }`}
               >
                 <Globe className="w-4 h-4 mr-2" />
                 Sepolia
@@ -212,7 +243,11 @@ function Staking() {
               <Button
                 variant={currentChain === "fuji" ? "default" : "outline"}
                 onClick={() => setCurrentChain("fuji")}
-                className={`${currentChain === "fuji" ? "bg-black dark:bg-white text-white dark:text-black" : "border-black dark:border-white text-black dark:text-white"}`}
+                className={`${
+                  currentChain === "fuji" 
+                    ? "bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200" 
+                    : "border-black dark:border-white text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black"
+                }`}
               >
                 <Globe className="w-4 h-4 mr-2" />
                 Fuji
@@ -317,8 +352,12 @@ function Staking() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-neutral-600 dark:text-neutral-300 text-sm">Local APY</p>
-                        <p className="text-black dark:text-white text-2xl font-bold">{formatAPY(localAPY)}%</p>
+                        <p className="text-neutral-600 dark:text-neutral-300 text-sm">
+                          {currentChain === "sepolia" ? "Sepolia APY" : "Fuji APY"}
+                        </p>
+                        <p className="text-black dark:text-white text-2xl font-bold">{localAPY}%</p>
+                        {/* Debug info */}
+                       
                       </div>
                       <div className="w-12 h-12 bg-black dark:bg-white rounded-full flex items-center justify-center">
                         <TrendingUp className="w-6 h-6 text-white dark:text-black" />
@@ -331,9 +370,13 @@ function Staking() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-neutral-600 dark:text-neutral-300 text-sm">Remote APY</p>
-                        <p className="text-black dark:text-white text-2xl font-bold">{formatAPY(remoteAPY)}%</p>
-                        <p className="text-xs text-neutral-500 dark:text-neutral-400">{getChainName(destinationInfo.chain)}</p>
+                        <p className="text-neutral-600 dark:text-neutral-300 text-sm">
+                          {currentChain === "sepolia" ? "Fuji APY" : "Sepolia APY"}
+                        </p>
+                        <p className="text-black dark:text-white text-2xl font-bold">{remoteAPY}%</p>
+                        {/* <p className="text-xs text-neutral-500 dark:text-neutral-400">{getChainName(destinationInfo.chain)}</p> */}
+                        {/* Debug info */}
+  
                       </div>
                       <div className="w-12 h-12 bg-black dark:bg-white rounded-full flex items-center justify-center">
                         <ArrowRight className="w-6 h-6 text-white dark:text-black" />
@@ -372,14 +415,14 @@ function Staking() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-black dark:text-white hover:text-neutral-600 dark:hover:text-neutral-300"
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors"
                           onClick={() => setDepositAmount("100")}
                         >
                           MAX
                         </Button>
                       </div>
                       <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
-                        Current APY: {formatAPY(localAPY)}%
+                        Current APY: {formatAPY(localAPY)}% (USDT)
                       </p>
                     </div>
 
@@ -397,34 +440,28 @@ function Staking() {
                     </div>
                   </CardContent>
                   <CardFooter>
-                    <TransactionButton
-                      transaction={() =>
-                        prepareContractCall({
-                          contract: getCurrentContract(),
-                          method: "function deposit(uint256 amount)",
-                          params: [BigInt(ethers.parseEther(depositAmount))],
-                        })
-                      }
-                      onTransactionConfirmed={async () => {
-                        alert("Deposit successful!");
-                        setDepositAmount("");
-                      }}
-                      style={{
-                        width: "100%",
-                        backgroundColor: "#000000",
-                        color: "#ffffff",
-                        padding: "0.75rem 1rem",
-                        borderRadius: "0.375rem",
-                        cursor: "pointer",
-                        fontSize: "14px",
-                        fontWeight: "600",
-                        border: "none",
-                        opacity: !depositAmount ? "0.5" : "1",
-                        pointerEvents: !depositAmount ? "none" : "auto"
-                      }}
-                    >
-                      Deposit Tokens
-                    </TransactionButton>
+                    <div className="w-full flex justify-center">
+                      <TransactionButton
+                        transaction={() =>
+                          prepareContractCall({
+                            contract: getCurrentContract(),
+                            method: "function deposit(uint256 amount)",
+                            params: [BigInt(ethers.parseEther(depositAmount))],
+                          })
+                        }
+                        onTransactionConfirmed={async () => {
+                          alert("Deposit successful!");
+                          setDepositAmount("");
+                        }}
+                        className={`px-8 py-3 rounded-md text-sm font-semibold transition-all duration-200 ${
+                          !depositAmount 
+                            ? "opacity-50 cursor-not-allowed bg-white dark:bg-white text-gray-500 dark:text-gray-500" 
+                            : "bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 cursor-pointer"
+                        }`}
+                      >
+                        Deposit Tokens
+                      </TransactionButton>
+                    </div>
                   </CardFooter>
                 </Card>
 
@@ -455,57 +492,53 @@ function Staking() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-black dark:text-white hover:text-neutral-600 dark:hover:text-neutral-300"
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors"
                           onClick={() => setWithdrawAmount(userBalance)}
                         >
                           MAX
                         </Button>
                       </div>
                       <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
-                        Available: {formatNumber(userBalance)} tokens
+                        Available: {formatNumber(userBalance)} USDT
                       </p>
                     </div>
 
                     <div className="bg-neutral-50 dark:bg-neutral-900 rounded-lg p-4">
                       <div className="flex justify-between text-sm">
-                        <span className="text-neutral-600 dark:text-neutral-300">Migration Status:</span>
-                        <span className="text-green-600 dark:text-green-400 font-semibold">{migrationStatus}</span>
+                        <span className="text-neutral-600 dark:text-neutral-300">Token:</span>
+                        <span className="text-black dark:text-white">USDT</span>
                       </div>
                       <div className="flex justify-between text-sm mt-1">
-                        <span className="text-neutral-600 dark:text-neutral-300">Destination:</span>
-                        <span className="text-black dark:text-white">{getChainName(destinationInfo.chain)}</span>
+                        <span className="text-neutral-600 dark:text-neutral-300">Migration Status:</span>
+                        <span className={`text-sm ${migrationInProgress ? "text-yellow-600 dark:text-yellow-400" : "text-green-600 dark:text-green-400"}`}>
+                          {migrationInProgress ? "In Progress" : "Ready"}
+                        </span>
                       </div>
                     </div>
                   </CardContent>
                   <CardFooter className="flex flex-col space-y-2">
-                    <TransactionButton
-                      transaction={() =>
-                        prepareContractCall({
-                          contract: getCurrentContract(),
-                          method: "function withdraw(uint256 amount)",
-                          params: [BigInt(ethers.parseEther(withdrawAmount))],
-                        })
-                      }
-                      onTransactionConfirmed={async () => {
-                        alert("Withdrawal successful!");
-                        setWithdrawAmount("");
-                      }}
-                      style={{
-                        width: "100%",
-                        backgroundColor: "#000000",
-                        color: "#ffffff",
-                        padding: "0.75rem 1rem",
-                        borderRadius: "0.375rem",
-                        cursor: "pointer",
-                        fontSize: "14px",
-                        fontWeight: "600",
-                        border: "none",
-                        opacity: !withdrawAmount ? "0.5" : "1",
-                        pointerEvents: !withdrawAmount ? "none" : "auto"
-                      }}
-                    >
-                      Withdraw Tokens
-                    </TransactionButton>
+                    <div className="w-full flex justify-center">
+                      <TransactionButton
+                        transaction={() =>
+                          prepareContractCall({
+                            contract: getCurrentContract(),
+                            method: "function withdraw(uint256 amount)",
+                            params: [BigInt(ethers.parseEther(withdrawAmount))],
+                          })
+                        }
+                        onTransactionConfirmed={async () => {
+                          alert("Withdrawal successful!");
+                          setWithdrawAmount("");
+                        }}
+                        className={`px-8 py-3 rounded-md text-sm font-semibold transition-all duration-200 ${
+                          !withdrawAmount 
+                            ? "opacity-50 cursor-not-allowed bg-white dark:bg-white text-gray-500 dark:text-gray-500" 
+                            : "bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 cursor-pointer"
+                        }`}
+                      >
+                        Withdraw Tokens
+                      </TransactionButton>
+                    </div>
                   </CardFooter>
                 </Card>
               </div>
@@ -531,11 +564,15 @@ function Staking() {
                             </span>
                           </div>
                           <div className="flex justify-between text-sm">
-                            <span className="text-neutral-600 dark:text-neutral-300">Local APY:</span>
+                            <span className="text-neutral-600 dark:text-neutral-300">
+                              {currentChain === "sepolia" ? "Sepolia APY:" : "Fuji APY:"}
+                            </span>
                             <span className="text-black dark:text-white">{formatAPY(localAPY)}%</span>
                           </div>
                           <div className="flex justify-between text-sm">
-                            <span className="text-neutral-600 dark:text-neutral-300">Remote APY:</span>
+                            <span className="text-neutral-600 dark:text-neutral-300">
+                              {currentChain === "sepolia" ? "Fuji APY:" : "Sepolia APY:"}
+                            </span>
                             <span className="text-black dark:text-white">{formatAPY(remoteAPY)}%</span>
                           </div>
                           <div className="flex justify-between text-sm">
@@ -559,19 +596,11 @@ function Staking() {
                             onTransactionConfirmed={async () => {
                               alert("Migration triggered successfully!");
                             }}
-                            style={{
-                              width: "100%",
-                              backgroundColor: "#000000",
-                              color: "#ffffff",
-                              padding: "0.75rem 1rem",
-                              borderRadius: "0.375rem",
-                              cursor: "pointer",
-                              fontSize: "14px",
-                              fontWeight: "600",
-                              border: "none",
-                              opacity: migrationInProgress ? "0.5" : "1",
-                              pointerEvents: migrationInProgress ? "none" : "auto"
-                            }}
+                            className={`w-full px-4 py-3 rounded-md text-sm font-semibold transition-all duration-200 ${
+                              migrationInProgress 
+                                ? "opacity-50 cursor-not-allowed bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400" 
+                                : "bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 cursor-pointer"
+                            }`}
                           >
                             Trigger Migration
                           </TransactionButton>
@@ -587,19 +616,11 @@ function Staking() {
                             onTransactionConfirmed={async () => {
                               alert("Migration reset successfully!");
                             }}
-                            style={{
-                              width: "100%",
-                              backgroundColor: "#ffffff",
-                              color: "#000000",
-                              padding: "0.75rem 1rem",
-                              borderRadius: "0.375rem",
-                              cursor: "pointer",
-                              fontSize: "14px",
-                              fontWeight: "600",
-                              border: "1px solid #000000",
-                              opacity: !migrationInProgress ? "0.5" : "1",
-                              pointerEvents: !migrationInProgress ? "none" : "auto"
-                            }}
+                            className={`w-full px-4 py-3 rounded-md text-sm font-semibold transition-all duration-200 border ${
+                              !migrationInProgress 
+                                ? "opacity-50 cursor-not-allowed bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-700" 
+                                : "bg-white dark:bg-black text-black dark:text-white border-black dark:border-white hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer"
+                            }`}
                           >
                             Reset Migration
                           </TransactionButton>
@@ -644,6 +665,66 @@ function Staking() {
                           <li>• Transparent migration process</li>
                           <li>• Chainlink CCIP security</li>
                         </ul>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Debug Section */}
+              <div className="mt-8">
+                <Card className="bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
+                  <CardHeader>
+                    <CardTitle className="text-black dark:text-white text-lg">Debug Information</CardTitle>
+                    <CardDescription className="text-neutral-600 dark:text-neutral-300">
+                      Current state values for debugging
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span className="text-neutral-600 dark:text-neutral-300">Current Chain:</span>
+                          <span className="text-black dark:text-white font-mono">{currentChain}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-neutral-600 dark:text-neutral-300">User Balance:</span>
+                          <span className="text-black dark:text-white font-mono">{userBalance}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-neutral-600 dark:text-neutral-300">Total Deposited:</span>
+                          <span className="text-black dark:text-white font-mono">{totalDeposited}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-neutral-600 dark:text-neutral-300">Local APY (raw):</span>
+                          <span className="text-black dark:text-white font-mono">{localAPY}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-neutral-600 dark:text-neutral-300">Local APY (formatted):</span>
+                          <span className="text-black dark:text-white font-mono">{formatAPY(localAPY)}%</span>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span className="text-neutral-600 dark:text-neutral-300">Remote APY (raw):</span>
+                          <span className="text-black dark:text-white font-mono">{remoteAPY}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-neutral-600 dark:text-neutral-300">Remote APY (formatted):</span>
+                          <span className="text-black dark:text-white font-mono">{formatAPY(remoteAPY)}%</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-neutral-600 dark:text-neutral-300">Migration Status:</span>
+                          <span className="text-black dark:text-white font-mono">{migrationInProgress ? "In Progress" : "Ready"}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-neutral-600 dark:text-neutral-300">Destination Chain:</span>
+                          <span className="text-black dark:text-white font-mono">{getChainName(destinationInfo.chain)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-neutral-600 dark:text-neutral-300">Asset Address:</span>
+                          <span className="text-black dark:text-white font-mono text-xs">{assetAddress}</span>
+                        </div>
                       </div>
                     </div>
                   </CardContent>
