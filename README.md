@@ -1,6 +1,6 @@
 # YieldHop 🚀
 
-![YieldHop Banner](https://github.com/thirdweb-example/next-starter/assets/57885104/20c8ce3b-4e55-4f10-ae03-2fe4743a5ee8)
+
 
 **Cross-chain yield optimization powered by Chainlink CCIP and Automation**
 
@@ -21,6 +21,7 @@ YieldHop is a revolutionary DeFi platform that automatically routes stablecoins 
 - **CrossChainV3.sol**: Main yield aggregator contract with CCIP integration
 - **Chainlink CCIP**: Secure cross-chain messaging and asset transfers
 - **Chainlink Automation**: Automated yield optimization triggers
+- https://github.com/Himanshujadhav2004/YeildhopContract/blob/main/contracts/CrossChainV3.sol
 
 ### Frontend
 - **Next.js 15**: Modern React framework with TypeScript
