@@ -84,7 +84,7 @@ function Landing(){
     id: 5,
     title: "Trust",
     date: "Jun 2024",
-    content: "Built on Chainlink’s trusted infrastructure.",
+    content: "Built on Chainlink's trusted infrastructure.",
     category: "Feature",
     icon: Shield,
     relatedIds: [4],
@@ -105,10 +105,10 @@ return(<div>
       <TypewriterEffectSmooth words={words} />
       <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 space-x-0 md:space-x-4">
         <button className="w-40 h-10 rounded-xl bg-black border dark:border-white border-transparent text-white text-sm">
-          Join now
+          Stake now
         </button>
         <button className="w-40 h-10 rounded-xl bg-white text-black border border-black  text-sm">
-          Signup
+          Earn now
         </button>
       </div>
     </div>
@@ -163,19 +163,46 @@ Chainlink CCIP and Automation enable secure, automated cross-chain yield transfe
 
         {/* Info Right */}
         <div className="w-full lg:w-1/2 flex justify-center">
-          <div className="bg-gradient-to-b from-blue-50 to-blue-100 dark:from-zinc-800 dark:to-zinc-900 rounded-2xl shadow-xl p-6 max-w-md w-full">
-            <h2 className="text-3xl font-bold mb-4 text-gray-900 dark:text-white text-center lg:text-left">
-              Information of YieldHop
-            </h2>
-            <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-sm">
-              YieldHop is a cross-chain yield optimizer powered by <strong>Chainlink CCIP</strong> and <strong>Automation</strong>. It routes stablecoins across chains to find the best returns automatically and securely.
-            </p>
-            <ul className="mt-6 list-disc list-inside text-gray-600 dark:text-gray-400 text-sm">
-              <li>Stake once, earn everywhere</li>
-              <li>Secure cross-chain yield routing</li>
-              <li>Built on Chainlink infrastructure</li>
-              <li>Fully decentralized & transparent</li>
-            </ul>
+          <div className="relative bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900 rounded-3xl shadow-2xl p-8 max-w-md w-full border border-blue-100/50 dark:border-zinc-700/50 backdrop-blur-sm">
+            {/* Decorative elements */}
+            <div className="absolute -top-1 -right-1 w-20 h-20 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-full opacity-10 blur-xl"></div>
+            <div className="absolute -bottom-1 -left-1 w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-600 rounded-full opacity-10 blur-xl"></div>
+            
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+                  About YieldHop
+                </h2>
+              </div>
+              
+              <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-sm mb-6">
+                YieldHop is a cross-chain yield optimizer powered by <span className="font-semibold text-blue-600 dark:text-blue-400">Chainlink CCIP</span> and <span className="font-semibold text-indigo-600 dark:text-indigo-400">Automation</span>. It routes stablecoins across chains to find the best returns automatically and securely.
+              </p>
+              
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 text-sm">
+                  <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
+                  <span className="text-gray-700 dark:text-gray-300">Stake once, earn everywhere</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
+                  <span className="text-gray-700 dark:text-gray-300">Secure cross-chain yield routing</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full flex-shrink-0"></div>
+                  <span className="text-gray-700 dark:text-gray-300">Built on Chainlink infrastructure</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <div className="w-2 h-2 bg-indigo-500 rounded-full flex-shrink-0"></div>
+                  <span className="text-gray-700 dark:text-gray-300">Fully decentralized & transparent</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

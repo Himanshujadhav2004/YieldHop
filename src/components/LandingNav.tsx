@@ -1,13 +1,12 @@
-import { Home, User, Briefcase, FileText } from 'lucide-react'
+import { Home, Coins, Briefcase, PieChart } from 'lucide-react'
 import { NavBar } from "@/components/ui/tubelight-navbar"
 
 export function LandingNav() {
   const navItems = [
-    { name: 'Home', url: '#', icon: Home },
-    { name: 'Stake', url: '/stake', icon: User },
-    { name: 'Projects', url: '#', icon: Briefcase },
-    { name: 'Resume', url: '#', icon: FileText }
+    { name: 'Home', url: '/Landing', icon: Home },
+    { name: 'Stake', url: '/stake', icon: Coins },
+    { name: 'Portfolio', url: '/protfolio', icon: PieChart },
   ]
 
-  return <NavBar items={navItems} />
+  return <NavBar items={navItems} className={undefined} />
 }

@@ -11,7 +11,7 @@ import { useState, useEffect } from 'react';
 import { ConnectButton } from 'thirdweb/react';
 import { client } from '@/app/client';
 
-export function NavBar({ items, className }) {
+export function NavBar({ items, className }: { items: any[]; className?: string }) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -103,7 +103,7 @@ export function NavBar({ items, className }) {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={cn(
                     "flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted/50",
-                    isActive && "text-purple-600 bg-muted/80"
+                    isActive && "text-blue-500 bg-muted/80"
                   )}
                 >
                   <Icon size={20} strokeWidth={2} />

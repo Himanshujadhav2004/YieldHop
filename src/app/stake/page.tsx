@@ -10,14 +10,14 @@ import { getContract } from "thirdweb";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
 import { Wallet, TrendingUp, Lock, Unlock, Coins, Zap, ArrowRight, Globe, AlertCircle } from "lucide-react";
 import { LandingNav } from "@/components/LandingNav";
+import { useToast } from "@/hooks/use-toast";
 
 // Contract addresses
-const SEPOLIA_CONTRACT_ADDRESS = "0x97c4d9011524cd62026d34762370a6152ffffa22";
-const FUJI_CONTRACT_ADDRESS = "0x59a371b82cfa3a3f1d4ffa0fa9b75430df06ad2c";
+const SEPOLIA_CONTRACT_ADDRESS = "0x008a7e2a3D430030dCb9b385Ac71F3505F7694A0";
+const FUJI_CONTRACT_ADDRESS = "0xF865f81C57aB2ed1c5732B45924E31a52DEF9429";
 
 // Contract ABI (simplified for the functions we need)
 const CONTRACT_ABI = [
@@ -58,6 +58,7 @@ function Staking() {
   const [isLoading, setIsLoading] = useState(false);
   const [currentChain, setCurrentChain] = useState("sepolia");
   const [showSkeleton, setShowSkeleton] = useState(true);
+  const { toast } = useToast();
   
   // Contract data
   const [userBalance, setUserBalance] = useState("0");
@@ -219,15 +220,14 @@ function Staking() {
       {/* Navigation */}
       <LandingNav />
       
-      <div className="p-4 pt-24">
-        <div className="max-w-6xl mx-auto">
+      <div className="p-3 pt-20">
+        <div className="max-w-7xl mx-auto" >
           {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-black dark:text-white mb-2">YieldHop Cross-Chain Staking</h1>
-            <p className="text-neutral-600 dark:text-neutral-300 text-lg">Stake your tokens and earn rewards across chains</p>
+          <div className="text-center mb-6" style={{marginTop:"80px"}}>
+
             
             {/* Chain Selector */}
-            <div className="flex justify-center mt-6 space-x-4">
+            <div className="flex justify-center mt-4 space-x-4">
               <Button
                 variant={currentChain === "sepolia" ? "default" : "outline"}
                 onClick={() => setCurrentChain("sepolia")}
@@ -253,16 +253,18 @@ function Staking() {
                 Fuji
               </Button>
             </div>
+            <p className="text-neutral-600 dark:text-neutral-300 text-base" style={{marginTop:"10px"}}>Stake your tokens and earn rewards across chains</p>
+
           </div>
 
           {!address ? (
             <div className="flex items-center justify-center p-8">
               <Card className="w-full max-w-md bg-white dark:bg-black border border-neutral-200 dark:border-neutral-800">
                 <CardHeader className="text-center">
-                  <div className="mx-auto w-16 h-16 bg-black dark:bg-white rounded-full flex items-center justify-center mb-4">
-                    <Wallet className="w-8 h-8 text-white dark:text-black" />
+                  <div className="mx-auto w-12 h-12 bg-black dark:bg-white rounded-full flex items-center justify-center mb-3">
+                    <Wallet className="w-6 h-6 text-white dark:text-black" />
                   </div>
-                  <CardTitle className="text-black dark:text-white text-2xl">Connect Wallet</CardTitle>
+                  <CardTitle className="text-black dark:text-white text-xl">Connect Wallet</CardTitle>
                   <CardDescription className="text-neutral-600 dark:text-neutral-300">
                     Connect your wallet to start cross-chain staking
                   </CardDescription>
@@ -279,27 +281,27 @@ function Staking() {
               </Card>
             </div>
           ) : showSkeleton ? (
-            <div className="max-w-6xl mx-auto">
-              <div className="text-center mb-8">
-                <div className="bg-neutral-300 dark:bg-neutral-700 h-12 w-64 mx-auto mb-4 rounded animate-pulse"></div>
-                <div className="bg-neutral-300 dark:bg-neutral-700 h-6 w-96 mx-auto rounded animate-pulse"></div>
+            <div className="max-w-7xl mx-auto">
+              <div className="text-center mb-6">
+                <div className="bg-neutral-300 dark:bg-neutral-700 h-10 w-56 mx-auto mb-3 rounded animate-pulse"></div>
+                <div className="bg-neutral-300 dark:bg-neutral-700 h-5 w-80 mx-auto rounded animate-pulse"></div>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                 {[...Array(4)].map((_, index) => (
-                  <div key={index} className="bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 animate-pulse">
-                    <div className="bg-neutral-300 dark:bg-neutral-700 h-4 w-24 mb-2 rounded"></div>
-                    <div className="bg-neutral-300 dark:bg-neutral-700 h-8 w-32 rounded"></div>
+                  <div key={index} className="bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-4 animate-pulse">
+                    <div className="bg-neutral-300 dark:bg-neutral-700 h-3 w-20 mb-2 rounded"></div>
+                    <div className="bg-neutral-300 dark:bg-neutral-700 h-6 w-28 rounded"></div>
                   </div>
                 ))}
               </div>
               
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {[...Array(2)].map((_, index) => (
-                  <div key={index} className="bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-6 animate-pulse">
-                    <div className="bg-neutral-300 dark:bg-neutral-700 h-6 w-32 mb-4 rounded"></div>
-                    <div className="bg-neutral-300 dark:bg-neutral-700 h-10 w-full mb-4 rounded"></div>
-                    <div className="bg-neutral-300 dark:bg-neutral-700 h-12 w-full rounded"></div>
+                  <div key={index} className="bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-4 animate-pulse">
+                    <div className="bg-neutral-300 dark:bg-neutral-700 h-5 w-28 mb-3 rounded"></div>
+                    <div className="bg-neutral-300 dark:bg-neutral-700 h-8 w-full mb-3 rounded"></div>
+                    <div className="bg-neutral-300 dark:bg-neutral-700 h-10 w-full rounded"></div>
                   </div>
                 ))}
               </div>
@@ -308,78 +310,73 @@ function Staking() {
             <>
               {/* Migration Status Alert */}
               {migrationInProgress && (
-                <Card className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800 mb-6">
-                  <CardContent className="p-4">
+                <Card className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800 mb-4">
+                  <CardContent className="p-3">
                     <div className="flex items-center">
-                      <AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mr-2" />
-                      <span className="text-yellow-800 dark:text-yellow-200">Migration in progress. Please wait for completion.</span>
+                      <AlertCircle className="w-4 h-4 text-yellow-600 dark:text-yellow-400 mr-2" />
+                      <span className="text-yellow-800 dark:text-yellow-200 text-sm">Migration in progress. Please wait for completion.</span>
                     </div>
                   </CardContent>
                 </Card>
               )}
 
               {/* Stats Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                 <Card className="bg-white dark:bg-black border border-neutral-200 dark:border-neutral-800">
-                  <CardContent className="p-6">
+                  <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-neutral-600 dark:text-neutral-300 text-sm">Total Staked</p>
-                        <p className="text-black dark:text-white text-2xl font-bold">{formatNumber(totalDeposited)}</p>
+                        <p className="text-neutral-600 dark:text-neutral-300 text-xs">Total Staked</p>
+                        <p className="text-black dark:text-white text-lg font-bold">{formatNumber(totalDeposited)}</p>
                       </div>
-                      <div className="w-12 h-12 bg-black dark:bg-white rounded-full flex items-center justify-center">
-                        <Lock className="w-6 h-6 text-white dark:text-black" />
+                      <div className="w-10 h-10 bg-black dark:bg-white rounded-full flex items-center justify-center">
+                        <Lock className="w-5 h-5 text-white dark:text-black" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card className="bg-white dark:bg-black border border-neutral-200 dark:border-neutral-800">
-                  <CardContent className="p-6">
+                  <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-neutral-600 dark:text-neutral-300 text-sm">Your Staked</p>
-                        <p className="text-black dark:text-white text-2xl font-bold">{formatNumber(userBalance)}</p>
+                        <p className="text-neutral-600 dark:text-neutral-300 text-xs">Your Staked</p>
+                        <p className="text-black dark:text-white text-lg font-bold">{formatNumber(userBalance)}</p>
                       </div>
-                      <div className="w-12 h-12 bg-black dark:bg-white rounded-full flex items-center justify-center">
-                        <Coins className="w-6 h-6 text-white dark:text-black" />
+                      <div className="w-10 h-10 bg-black dark:bg-white rounded-full flex items-center justify-center">
+                        <Coins className="w-5 h-5 text-white dark:text-black" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card className="bg-white dark:bg-black border border-neutral-200 dark:border-neutral-800">
-                  <CardContent className="p-6">
+                  <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-neutral-600 dark:text-neutral-300 text-sm">
+                        <p className="text-neutral-600 dark:text-neutral-300 text-xs">
                           {currentChain === "sepolia" ? "Sepolia APY" : "Fuji APY"}
                         </p>
-                        <p className="text-black dark:text-white text-2xl font-bold">{localAPY}%</p>
-                        {/* Debug info */}
-                       
+                        <p className="text-black dark:text-white text-lg font-bold">{localAPY}%</p>
                       </div>
-                      <div className="w-12 h-12 bg-black dark:bg-white rounded-full flex items-center justify-center">
-                        <TrendingUp className="w-6 h-6 text-white dark:text-black" />
+                      <div className="w-10 h-10 bg-black dark:bg-white rounded-full flex items-center justify-center">
+                        <TrendingUp className="w-5 h-5 text-white dark:text-black" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card className="bg-white dark:bg-black border border-neutral-200 dark:border-neutral-800">
-                  <CardContent className="p-6">
+                  <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-neutral-600 dark:text-neutral-300 text-sm">
+                        <p className="text-neutral-600 dark:text-neutral-300 text-xs">
                           {currentChain === "sepolia" ? "Fuji APY" : "Sepolia APY"}
                         </p>
-                        <p className="text-black dark:text-white text-2xl font-bold">{remoteAPY}%</p>
-                        {/* <p className="text-xs text-neutral-500 dark:text-neutral-400">{getChainName(destinationInfo.chain)}</p> */}
-                        {/* Debug info */}
-  
+                        <p className="text-black dark:text-white text-lg font-bold">{remoteAPY}%</p>
                       </div>
-                      <div className="w-12 h-12 bg-black dark:bg-white rounded-full flex items-center justify-center">
-                        <ArrowRight className="w-6 h-6 text-white dark:text-black" />
+                      <div className="w-10 h-10 bg-black dark:bg-white rounded-full flex items-center justify-center">
+                        <ArrowRight className="w-5 h-5 text-white dark:text-black" />
                       </div>
                     </div>
                   </CardContent>
@@ -387,19 +384,19 @@ function Staking() {
               </div>
 
               {/* Main Staking Interface */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Deposit Card */}
                 <Card className="bg-white dark:bg-black border border-neutral-200 dark:border-neutral-800">
-                  <CardHeader>
-                    <CardTitle className="text-black dark:text-white flex items-center">
-                      <Lock className="w-6 h-6 mr-2" />
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-black dark:text-white text-lg flex items-center">
+                      <Lock className="w-4 h-4 mr-2" />
                       Deposit Tokens
                     </CardTitle>
-                    <CardDescription className="text-neutral-600 dark:text-neutral-300">
+                    <CardDescription className="text-neutral-600 dark:text-neutral-300 text-sm">
                       Deposit your tokens to start earning cross-chain yields
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-3">
                     <div>
                       <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2 block">
                         Amount to Deposit
@@ -415,7 +412,7 @@ function Staking() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors"
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors text-xs"
                           onClick={() => setDepositAmount("100")}
                         >
                           MAX
@@ -426,14 +423,14 @@ function Staking() {
                       </p>
                     </div>
 
-                    <div className="bg-neutral-50 dark:bg-neutral-900 rounded-lg p-4">
-                      <div className="flex justify-between text-sm">
+                    <div className="bg-neutral-50 dark:bg-neutral-900 rounded-lg p-3">
+                      <div className="flex justify-between text-xs">
                         <span className="text-neutral-600 dark:text-neutral-300">Chain:</span>
                         <span className="text-black dark:text-white">{currentChain === "sepolia" ? "Sepolia" : "Fuji"}</span>
                       </div>
-                      <div className="flex justify-between text-sm mt-1">
+                      <div className="flex justify-between text-xs mt-1">
                         <span className="text-neutral-600 dark:text-neutral-300">Migration Status:</span>
-                        <span className={`text-sm ${migrationInProgress ? "text-yellow-600 dark:text-yellow-400" : "text-green-600 dark:text-green-400"}`}>
+                        <span className={`text-xs ${migrationInProgress ? "text-yellow-600 dark:text-yellow-400" : "text-green-600 dark:text-green-400"}`}>
                           {migrationInProgress ? "In Progress" : "Ready"}
                         </span>
                       </div>
@@ -450,10 +447,14 @@ function Staking() {
                           })
                         }
                         onTransactionConfirmed={async () => {
-                          alert("Deposit successful!");
+                          toast({
+                            title: "Deposit Successful! 🎉",
+                            description: `Successfully deposited ${depositAmount} USDT on ${currentChain === "sepolia" ? "Sepolia" : "Fuji"}`,
+                          });
                           setDepositAmount("");
                         }}
-                        className={`px-8 py-3 rounded-md text-sm font-semibold transition-all duration-200 ${
+                     
+                        className={`px-6 py-2 rounded-md text-sm font-semibold transition-all duration-200 ${
                           !depositAmount 
                             ? "opacity-50 cursor-not-allowed bg-white dark:bg-white text-gray-500 dark:text-gray-500" 
                             : "bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 cursor-pointer"
@@ -467,16 +468,16 @@ function Staking() {
 
                 {/* Withdraw Card */}
                 <Card className="bg-white dark:bg-black border border-neutral-200 dark:border-neutral-800">
-                  <CardHeader>
-                    <CardTitle className="text-black dark:text-white flex items-center">
-                      <Unlock className="w-6 h-6 mr-2" />
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-black dark:text-white text-lg flex items-center">
+                      <Unlock className="w-4 h-4 mr-2" />
                       Withdraw Tokens
                     </CardTitle>
-                    <CardDescription className="text-neutral-600 dark:text-neutral-300">
+                    <CardDescription className="text-neutral-600 dark:text-neutral-300 text-sm">
                       Withdraw your staked tokens
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-3">
                     <div>
                       <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2 block">
                         Amount to Withdraw
@@ -492,7 +493,7 @@ function Staking() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors"
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors text-xs"
                           onClick={() => setWithdrawAmount(userBalance)}
                         >
                           MAX
@@ -503,14 +504,14 @@ function Staking() {
                       </p>
                     </div>
 
-                    <div className="bg-neutral-50 dark:bg-neutral-900 rounded-lg p-4">
-                      <div className="flex justify-between text-sm">
+                    <div className="bg-neutral-50 dark:bg-neutral-900 rounded-lg p-3">
+                      <div className="flex justify-between text-xs">
                         <span className="text-neutral-600 dark:text-neutral-300">Token:</span>
                         <span className="text-black dark:text-white">USDT</span>
                       </div>
-                      <div className="flex justify-between text-sm mt-1">
+                      <div className="flex justify-between text-xs mt-1">
                         <span className="text-neutral-600 dark:text-neutral-300">Migration Status:</span>
-                        <span className={`text-sm ${migrationInProgress ? "text-yellow-600 dark:text-yellow-400" : "text-green-600 dark:text-green-400"}`}>
+                        <span className={`text-xs ${migrationInProgress ? "text-yellow-600 dark:text-yellow-400" : "text-green-600 dark:text-green-400"}`}>
                           {migrationInProgress ? "In Progress" : "Ready"}
                         </span>
                       </div>
@@ -527,10 +528,14 @@ function Staking() {
                           })
                         }
                         onTransactionConfirmed={async () => {
-                          alert("Withdrawal successful!");
+                          toast({
+                            title: "Withdrawal Successful! 🎉",
+                            description: `Successfully withdrawn ${withdrawAmount} USDT from ${currentChain === "sepolia" ? "Sepolia" : "Fuji"}`,
+                          });
                           setWithdrawAmount("");
                         }}
-                        className={`px-8 py-3 rounded-md text-sm font-semibold transition-all duration-200 ${
+                  
+                        className={`px-6 py-2 rounded-md text-sm font-semibold transition-all duration-200 ${
                           !withdrawAmount 
                             ? "opacity-50 cursor-not-allowed bg-white dark:bg-white text-gray-500 dark:text-gray-500" 
                             : "bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 cursor-pointer"
@@ -544,19 +549,19 @@ function Staking() {
               </div>
 
               {/* Migration Controls (Admin Only) */}
-              <div className="mt-8">
+              <div className="mt-6">
                 <Card className="bg-white dark:bg-black border border-neutral-200 dark:border-neutral-800">
-                  <CardHeader>
-                    <CardTitle className="text-black dark:text-white">Cross-Chain Migration Controls</CardTitle>
-                    <CardDescription className="text-neutral-600 dark:text-neutral-300">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-black dark:text-white text-lg">Cross-Chain Migration Controls</CardTitle>
+                    <CardDescription className="text-neutral-600 dark:text-neutral-300 text-sm">
                       Manage cross-chain migrations and APY settings
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-4">
-                        <h4 className="text-black dark:text-white font-semibold">Migration Status</h4>
-                        <div className="bg-neutral-50 dark:bg-neutral-900 rounded-lg p-4 space-y-2">
+                      <div className="space-y-3">
+                        <h4 className="text-black dark:text-white font-semibold text-base">Migration Status</h4>
+                        <div className="bg-neutral-50 dark:bg-neutral-900 rounded-lg p-4 space-y-3">
                           <div className="flex justify-between text-sm">
                             <span className="text-neutral-600 dark:text-neutral-300">Status:</span>
                             <span className={`${migrationInProgress ? "text-yellow-600 dark:text-yellow-400" : "text-green-600 dark:text-green-400"}`}>
@@ -582,9 +587,9 @@ function Staking() {
                         </div>
                       </div>
 
-                      <div className="space-y-4">
-                        <h4 className="text-black dark:text-white font-semibold">Migration Actions</h4>
-                        <div className="space-y-2">
+                      <div className="space-y-4 flex flex-col justify-center">
+                        <div>
+                          <h4 className="text-black dark:text-white font-semibold text-base mb-3">Migration Actions</h4>
                           <TransactionButton
                             transaction={() =>
                               prepareContractCall({
@@ -594,9 +599,12 @@ function Staking() {
                               })
                             }
                             onTransactionConfirmed={async () => {
-                              alert("Migration triggered successfully!");
+                              toast({
+                                title: "Migration Triggered! 🚀",
+                                description: "Cross-chain migration has been initiated successfully.",
+                              });
                             }}
-                            className={`w-full px-4 py-3 rounded-md text-sm font-semibold transition-all duration-200 ${
+                            className={`w-full px-6 py-3 rounded-md text-sm font-semibold transition-all duration-200 ${
                               migrationInProgress 
                                 ? "opacity-50 cursor-not-allowed bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400" 
                                 : "bg-black dark:bg-white text-white dark:text-black hover:bg-gray-800 dark:hover:bg-gray-200 cursor-pointer"
@@ -604,26 +612,13 @@ function Staking() {
                           >
                             Trigger Migration
                           </TransactionButton>
-                          
-                          <TransactionButton
-                            transaction={() =>
-                              prepareContractCall({
-                                contract: getCurrentContract(),
-                                method: "function resetMigration()",
-                                params: [],
-                              })
-                            }
-                            onTransactionConfirmed={async () => {
-                              alert("Migration reset successfully!");
-                            }}
-                            className={`w-full px-4 py-3 rounded-md text-sm font-semibold transition-all duration-200 border ${
-                              !migrationInProgress 
-                                ? "opacity-50 cursor-not-allowed bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-700" 
-                                : "bg-white dark:bg-black text-black dark:text-white border-black dark:border-white hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer"
-                            }`}
-                          >
-                            Reset Migration
-                          </TransactionButton>
+                        </div>
+                        
+                        <div className="text-xs text-neutral-500 dark:text-neutral-400 text-center">
+                          {migrationInProgress 
+                            ? "Migration is currently in progress. Please wait for completion."
+                            : "Click to trigger cross-chain migration when conditions are met."
+                          }
                         </div>
                       </div>
                     </div>
@@ -632,16 +627,16 @@ function Staking() {
               </div>
 
               {/* Additional Info */}
-              <div className="mt-8">
+              <div className="mt-6">
                 <Card className="bg-white dark:bg-black border border-neutral-200 dark:border-neutral-800">
-                  <CardHeader>
-                    <CardTitle className="text-black dark:text-white">Cross-Chain Staking Information</CardTitle>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-black dark:text-white text-lg">Cross-Chain Staking Information</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
-                        <h4 className="text-black dark:text-white font-semibold mb-2">How it works</h4>
-                        <ul className="text-neutral-600 dark:text-neutral-300 text-sm space-y-1">
+                        <h4 className="text-black dark:text-white font-semibold mb-2 text-sm">How it works</h4>
+                        <ul className="text-neutral-600 dark:text-neutral-300 text-xs space-y-1">
                           <li>• Deposit tokens on any supported chain</li>
                           <li>• Earn APY based on current chain rates</li>
                           <li>• Automatic migration to higher APY chains</li>
@@ -649,8 +644,8 @@ function Staking() {
                         </ul>
                       </div>
                       <div>
-                        <h4 className="text-black dark:text-white font-semibold mb-2">Supported Chains</h4>
-                        <ul className="text-neutral-600 dark:text-neutral-300 text-sm space-y-1">
+                        <h4 className="text-black dark:text-white font-semibold mb-2 text-sm">Supported Chains</h4>
+                        <ul className="text-neutral-600 dark:text-neutral-300 text-xs space-y-1">
                           <li>• Sepolia Testnet</li>
                           <li>• Avalanche Fuji Testnet</li>
                           <li>• Cross-chain CCIP integration</li>
@@ -658,8 +653,8 @@ function Staking() {
                         </ul>
                       </div>
                       <div>
-                        <h4 className="text-black dark:text-white font-semibold mb-2">Benefits</h4>
-                        <ul className="text-neutral-600 dark:text-neutral-300 text-sm space-y-1">
+                        <h4 className="text-black dark:text-white font-semibold mb-2 text-sm">Benefits</h4>
+                        <ul className="text-neutral-600 dark:text-neutral-300 text-xs space-y-1">
                           <li>• Optimized yield across chains</li>
                           <li>• Automated rebalancing</li>
                           <li>• Transparent migration process</li>
@@ -671,65 +666,8 @@ function Staking() {
                 </Card>
               </div>
 
-              {/* Debug Section */}
-              <div className="mt-8">
-                <Card className="bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800">
-                  <CardHeader>
-                    <CardTitle className="text-black dark:text-white text-lg">Debug Information</CardTitle>
-                    <CardDescription className="text-neutral-600 dark:text-neutral-300">
-                      Current state values for debugging
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                      <div className="space-y-2">
-                        <div className="flex justify-between">
-                          <span className="text-neutral-600 dark:text-neutral-300">Current Chain:</span>
-                          <span className="text-black dark:text-white font-mono">{currentChain}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-neutral-600 dark:text-neutral-300">User Balance:</span>
-                          <span className="text-black dark:text-white font-mono">{userBalance}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-neutral-600 dark:text-neutral-300">Total Deposited:</span>
-                          <span className="text-black dark:text-white font-mono">{totalDeposited}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-neutral-600 dark:text-neutral-300">Local APY (raw):</span>
-                          <span className="text-black dark:text-white font-mono">{localAPY}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-neutral-600 dark:text-neutral-300">Local APY (formatted):</span>
-                          <span className="text-black dark:text-white font-mono">{formatAPY(localAPY)}%</span>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex justify-between">
-                          <span className="text-neutral-600 dark:text-neutral-300">Remote APY (raw):</span>
-                          <span className="text-black dark:text-white font-mono">{remoteAPY}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-neutral-600 dark:text-neutral-300">Remote APY (formatted):</span>
-                          <span className="text-black dark:text-white font-mono">{formatAPY(remoteAPY)}%</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-neutral-600 dark:text-neutral-300">Migration Status:</span>
-                          <span className="text-black dark:text-white font-mono">{migrationInProgress ? "In Progress" : "Ready"}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-neutral-600 dark:text-neutral-300">Destination Chain:</span>
-                          <span className="text-black dark:text-white font-mono">{getChainName(destinationInfo.chain)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-neutral-600 dark:text-neutral-300">Asset Address:</span>
-                          <span className="text-black dark:text-white font-mono text-xs">{assetAddress}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+          
+      
             </>
           )}
         </div>

@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThirdwebProvider } from "thirdweb/react";
 import { ThemeProvider } from "@/components/ui/theme-provider";
-
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,10 +19,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <ThirdwebProvider>{children}</ThirdwebProvider>
-          
+        <ThirdwebProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+            storageKey="yieldhop-theme"
+          >
+            {children}
+            <Toaster />
+          </ThemeProvider>
+        </ThirdwebProvider>
       </body>
     </html>
   );
